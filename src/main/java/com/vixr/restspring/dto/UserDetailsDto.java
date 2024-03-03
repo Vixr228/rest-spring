@@ -45,4 +45,13 @@ public class UserDetailsDto {
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\n\tuser=" + user +
+                ", \n\tcarList=" + carList +
+                ", \n\ttotalPrice=" + totalPrice +
+                "\n}";
+    }
 }

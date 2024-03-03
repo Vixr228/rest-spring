@@ -31,8 +31,6 @@ public class Car {
         this.price = price;
     }
 
-    // Геттеры и сеттеры
-
     public Integer getId() {
         return id;
     }
@@ -63,5 +61,14 @@ public class Car {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\n\tid=" + id +
+                ", \n\tname='" + name +
+                ", \n\tprice=" + price +
+                "\n}";
     }
 }

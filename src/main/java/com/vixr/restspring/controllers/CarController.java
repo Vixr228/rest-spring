@@ -1,9 +1,7 @@
 package com.vixr.restspring.controllers;
 
 import com.vixr.restspring.dto.CarDto;
-import com.vixr.restspring.dto.UserDto;
 import com.vixr.restspring.models.Car;
-import com.vixr.restspring.models.User;
 import com.vixr.restspring.services.CarService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,21 +32,24 @@ public class CarController {
 
     @Operation(summary = "Create new car", description = "Create new car")
     @PostMapping("/")
-    public ResponseEntity<String> createCar(@RequestBody CarDto carRequest) {
+    public ResponseEntity<?> createCar(@RequestBody CarDto carRequest) {
         try {
-            carService.create(carRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Car created successfully");
+            return new ResponseEntity<>(carService.create(carRequest), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred while creating car");
+            return new ResponseEntity<>("Error occurred while creating car", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Operation(summary = "Get a car by id", description = "Returns a car as per the id")
     @GetMapping("/{id}")
-    public ResponseEntity<Car> getCarById(@PathVariable("id") int id) {
-        return new ResponseEntity<>(carService.findById(id), HttpStatus.OK);
+    public ResponseEntity<?> getCarById(@PathVariable("id") int id) {
+        try {
+            return new ResponseEntity<>(carService.findById(id), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Operation(summary = "Update a car with id", description = "Update a car with id")
@@ -56,7 +57,7 @@ public class CarController {
     @ResponseBody
     public ResponseEntity<String> updateCar(@PathVariable Integer id, @RequestBody CarDto updateRequest) {
         try {
-            carService.updateUser(id, updateRequest);
+            carService.updateCar(id, updateRequest);
             return ResponseEntity.ok("Car with id " + id + " updated successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Car not found with id: " + id);

@@ -19,8 +19,8 @@ public class UserService {
     private final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    private UserRepository userRepository;
-    private CarService carService;
+    private final UserRepository userRepository;
+    private final CarService carService;
 
     @Autowired
     public UserService(UserRepository userRepository, CarService carService) {
@@ -30,10 +30,13 @@ public class UserService {
 
     public User create(UserDto dto) {
         if(dto.getFirstName() != null
-                && dto.getEmail() != null
-                && validateEmail(dto.getEmail())) {
-            User user = new User(dto.getFirstName(), dto.getLastName(), dto.getEmail());
-            return userRepository.save(user);
+                && dto.getEmail() != null) {
+            if(validateEmail(dto.getEmail())){
+                User user = new User(dto.getFirstName(), dto.getLastName(), dto.getEmail());
+                return userRepository.save(user);
+            } else {
+                throw new IllegalArgumentException("Invalid email");
+            }
         } else {
             throw new IllegalArgumentException("Required attributes are not filled in");
         }
@@ -61,7 +64,6 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            // Обновляем данные пользователя
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
             user.setEmail(userDto.getEmail());
@@ -82,7 +84,7 @@ public class UserService {
         }
     }
 
-    private boolean validateEmail(String emailStr) {
+    boolean validateEmail(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return matcher.matches();
     }

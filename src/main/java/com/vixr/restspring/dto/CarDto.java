@@ -1,10 +1,5 @@
 package com.vixr.restspring.dto;
 
-import com.vixr.restspring.models.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
 import java.math.BigDecimal;
 
 public class CarDto {
@@ -23,5 +18,18 @@ public class CarDto {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

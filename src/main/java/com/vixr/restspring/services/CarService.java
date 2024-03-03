@@ -53,7 +53,7 @@ public class CarService {
         carRepository.deleteAll();
     }
 
-    public void updateUser(Integer id, CarDto carDto) {
+    public void updateCar(Integer id, CarDto carDto) {
         Optional<Car> optionalCar = carRepository.findById(id);
         if (optionalCar.isPresent()) {
             Car car = optionalCar.get();

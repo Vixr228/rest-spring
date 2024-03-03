@@ -1,6 +1,5 @@
 package com.vixr.restspring.controllers;
 
-import com.vixr.restspring.dto.UserDetailsDto;
 import com.vixr.restspring.dto.UserDto;
 import com.vixr.restspring.models.User;
 import com.vixr.restspring.services.UserService;
@@ -32,10 +31,9 @@ public class UserController {
 
     @Operation(summary = "Create new user", description = "Create new user")
     @PostMapping("/")
-    public ResponseEntity<String> createUser(@RequestBody UserDto dto) {
+    public ResponseEntity<?> createUser(@RequestBody UserDto dto) {
         try {
-            service.create(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+            return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
@@ -45,8 +43,12 @@ public class UserController {
 
     @Operation(summary = "Get a user by id", description = "Returns a user as per the id")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
-        return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    public ResponseEntity<?> getUserById(@PathVariable("id") int id) {
+        try {
+            return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+        }
     }
 
     @Operation(summary = "Delete a user by id", description = "Delete a user as per the id")
@@ -63,7 +65,7 @@ public class UserController {
     }
 
     @Operation(summary = "Delete all users", description = "Delete all users")
-    @DeleteMapping
+    @DeleteMapping("/")
     @ResponseBody
     public ResponseEntity<String> deleteAllUsers() {
         try {
@@ -88,8 +90,13 @@ public class UserController {
 
     @Operation(summary = "Get user full info (with cars)", description = "Get user full info (with cars)")
     @GetMapping("/userDetails/{id}")
-    public ResponseEntity<UserDetailsDto> getUserDetails(@PathVariable Integer id) {
-        return new ResponseEntity<>(service.getUserDetails(id), HttpStatus.OK);
+    public ResponseEntity<?> getUserDetails(@PathVariable Integer id) {
+        try {
+            return new ResponseEntity<>(service.getUserDetails(id), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+        }
+
     }
 
 }
